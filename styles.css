@@ -1,0 +1,11 @@
+body{
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f0f0f0;
+}
+.container{
+    background-color:aqua
+}
+.container h1{
+    color: darkblue;
+    text-align: center;
+}
