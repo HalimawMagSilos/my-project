@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typescript Task Manager</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configure Tailwind to use Inter font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'], // Set Inter as default sans-serif font
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Link to Google Fonts for 'Inter' -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Explicitly apply Inter font to the body */
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        /* Custom styles for the message box */
+        #message-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000; /* Ensure it's on top */
+        }
+        #message-box > div { /* Target the inner div of message-box for styling */
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            text-align: center;
+        }
+        #message-box-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        #message-box-content {
+            margin-bottom: 25px;
+            color: #555;
+        }
+        #message-box-buttons button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        #message-box-confirm {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            margin-right: 10px;
+        }
+        #message-box-confirm:hover {
+            background-color: #45a049;
+        }
+        #message-box-cancel {
+            background-color: #f44336; /* Red */
+            color: white;
+        }
+        #message-box-cancel:hover {
+            background-color: #d32f2f;
+        }
+        .hidden {
+            display: none !important;
+        }
+        /* Style for completed tasks */
+        .task-list li.completed {
+            background-color: #e6ffed; /* Light green for completed tasks */
+            border-color: #a7f3d0;
+        }
+        .task-list li.completed .task-text {
+            text-decoration: line-through;
+            color: #6b7280; /* Gray out text */
+        }
+        .task-list li.completed .form-checkbox {
+            border-color: #10B981;
+            background-color: #10B981;
+        }
+        /* Basic styling for task items that main.ts creates */
+        #task-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem; /* p-3 */
+            border: 1px solid #e5e7eb; /* border border-gray-200 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+        }
+        #task-list li .task-text {
+            margin-left: 0.75rem; /* ml-3 */
+            font-size: 1.125rem; /* text-lg */
+            color: #1f2937; /* text-gray-800 */
+            word-break: break-word; /* break-words */
+        }
+        #task-list li .form-checkbox {
+             height: 1.25rem; /* h-5 */
+             width: 1.25rem; /* w-5 */
+             color: #2563eb; /* text-blue-600 */
+             border-radius: 0.375rem; /* rounded-md */
+             transition-property: all; /* transition */
+             transition-duration: 150ms; /* duration-150 */
+             transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* ease-in-out */
+        }
+        #task-list li button {
+            background-color: #ef4444; /* bg-red-500 */
+            color: white;
+            padding-left: 0.75rem; /* px-3 */
+            padding-right: 0.75rem; /* px-3 */
+            padding-top: 0.25rem; /* py-1 */
+            padding-bottom: 0.25rem; /* py-1 */
+            border-radius: 0.375rem; /* rounded-md */
+            transition-property: all; /* transition */
+            transition-duration: 200ms; /* duration-200 */
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* ease-in-out */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow */
+        }
+        #task-list li button:hover {
+            background-color: #dc2626; /* hover:bg-red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <!-- Main app container -->
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Task Manager</h1>
+        <!-- User ID Display -->
+        <p class="text-sm text-gray-600 text-center mb-4">
+            Logged in as: <span id="user-id" class="font-semibold text-blue-600">Loading...</span>
+        </p>
+        <!-- Task input Section -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <input type="text" id="new-task-input" placeholder="Add a new Task" class="flex-grow p-3 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+            <button
+                id="add-task-button" 
+                class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-200 shadow-md flex-shrink-0"
+            >
+                Add Task
+            </button>
+        </div>
+
+        <!-- NEW: Loading Indicator added here (Matches main.ts) -->
+        <div id="loading-indicator" class="hidden text-center text-gray-500 mb-4">
+            Loading tasks...
+        </div>
+
+        <!-- Task List Section -->
+        <ul id="task-list" class="space-y-3">
+            <p
+                id="no-tasks-message" 
+                class="text-center text-gray-500 hidden">No Task</p>
+        </ul>
+
+        <!-- Message Box Alert -->
+        <div id="message-box" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+                <h3 id="message-box-title" class="text-xl font-semibold mb-4 text-gray-800"></h3>
+                <p id="message-box-content" class="mb-6 text-gray-700"></p>
+
+                <div class="flex justify-end space-x-3">
+                    <button id="message-box-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-200 hidden">Cancel</button>
+                    <button id="message-box-confirm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORTANT: Your compiled JavaScript should be loaded here -->
+    <!-- The path is relative to index.html -->
+    <script type="module" src="./dist/main.js"></script>
+</body>
+</html>

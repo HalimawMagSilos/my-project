@@ -1,0 +1,46 @@
+/* Custom CSS for Task Manager */
+
+/* Import Inter font (already linked in HTML, but good practice for consistency) */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Ensure the task list items have proper spacing and alignment */
+#task-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: #f9fafb; /* Light gray background for items */
+    border: 1px solid #e5e7eb; /* Light border */
+    border-radius: 0.5rem; /* Rounded corners */
+}
+
+/* Style for completed tasks */
+#task-list li.completed .task-text {
+    text-decoration: line-through;
+    color: #6b7280; /* Gray out completed tasks */
+}
+
+/* Checkbox styling (optional, using default browser checkbox for simplicity) */
+input[type="checkbox"] {
+    transform: scale(1.2); /* Slightly larger checkbox */
+    margin-right: 0.75rem;
+}
+
+/* Button styling enhancements for hover/focus */
+button {
+    cursor: pointer;
+    outline: none;
+}
+
+button:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Blue ring on focus */
+}
+
+/* Specific styling for action buttons within tasks */
+.task-actions button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem; /* text-sm */
+    line-height: 1.25rem;
+}

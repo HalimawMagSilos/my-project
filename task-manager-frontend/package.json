@@ -1,0 +1,19 @@
+{
+  "name": "task-manager-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Task Manager",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "serve": "lite-server",
+    "start": "npm run build && npm run serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "lite-server": "^2.6.1",
+    "typescript": "^5.4.5"
+  }
+}

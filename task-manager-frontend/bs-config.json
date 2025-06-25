@@ -1,0 +1,8 @@
+{
+  "port": 3003,
+  "files": ["./**/*.{html,htm,css,js}"],
+  "server": {
+    "baseDir": ["./"]  
+  },
+  "middleware": []
+}
